@@ -20,7 +20,7 @@ openai.api_key = 'OPENAI_API_KEY'
 #     max_tokens=50
 # )
 
-print(response.choices[0].text.strip())
+# print(response.choices[0].text.strip())
 
 # Weaviate client connection
 URL = os.getenv('YOUR_WCS_URL')
