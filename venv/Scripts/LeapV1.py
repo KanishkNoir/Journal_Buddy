@@ -2,15 +2,18 @@ import streamlit as st
 import pandas as pd
 import requests
 import weaviate
+import weaviate.classes as wvc
 import langchain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import cohere
 import os
 import base64
+import json
 from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
+
 
 def analyzeFoodImage(base64_image):
     api_key = os.getenv('OPENAI_API_KEY')
@@ -42,19 +45,12 @@ def analyzeFoodImage(base64_image):
     }
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-    print(response.json())
+    # Parse JSON data
+    data = response.json()
 
-    if response.ok:
-        json_response = response.json()
-        if json_response and 'choices' in json_response and json_response['choices']:
-            return json_response['choices'][0]['text']
-        else:
-            st.warning("No response received from the model.")
-            st.write(json_response)
-    else:
-        st.error("Error analyzing image")
-        st.error(f"Status code: {response.status_code}")
-        st.error(f"Response content: {response.text}")
+    # Extract and print the content
+    content = data['choices'][0]['message']['content']
+    return content
 
 
 # Weaviate client connection
@@ -107,15 +103,36 @@ def chunk_splitting(text):
 
 
 # def vectorization(chunks):
-#     response = co.embed(
-#         texts=chunks,
-#         model='embed-english-v3.0',
-#         input_type='classification'
-#     )
+#     embeddings = CohereEmbeddings(model="embed-english-light-v3.0")
 #     vectorstore = Weaviate.from_texts(
-#         chunks, response, client=client, by_text=False
+#         chunks, embeddings, client=weaviate_client, by_text=False
 #     )
 #     return vectorstore
+
+def cohere_chat(query):
+    chat_history = []
+    max_turns = 10
+
+    for _ in range(max_turns):
+        # get user input
+        message = input("Send the buddy a message: ")
+
+        # generate a response with the current chat history
+        response = co.chat(
+            message,
+            temperature=0.8,
+            chat_history=chat_history
+        )
+        answer = response.text
+
+        return answer
+
+        # add message and answer to the chat history
+        user_message = {"user_name": "User", "text": message}
+        bot_message = {"user_name": "Chatbot", "text": answer}
+
+        chat_history.append(user_message)
+        chat_history.append(bot_message)
 
 def process_input(input_text):
     client = OpenAI()
@@ -128,12 +145,15 @@ def process_input(input_text):
         ],
         max_tokens=200
     )
+    print(completion)
     return completion.choices[0].message.content
+
 
 def image_to_base64(image_path):
     with open(image_path, "rb") as img_file:
         base64_image = base64.b64encode(img_file.read()).decode("utf-8")
     return base64_image
+
 
 def main():
     # Fetch the daily quote
@@ -166,12 +186,13 @@ def main():
     # vectorStore = vectorization(chunks)
     # print("embeddings created successfully and stored in vector store")
 
+    st.chat_input("HELLO")
     weaviate_client.close()
 
     # Create the columns
     left, right = st.columns(2)
     # Create an upload box for images
-    uploaded_image = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
+    uploaded_image = left.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
 
     if uploaded_image is not None:
         # Display the uploaded image
@@ -191,7 +212,7 @@ def main():
         response = analyzeFoodImage(base64_image)
 
         # Display the output in a text area
-        st.success(response)
+        right.success(response)
 
 
 if __name__ == "__main__":
