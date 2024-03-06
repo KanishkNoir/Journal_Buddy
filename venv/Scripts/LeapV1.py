@@ -1,12 +1,26 @@
 import streamlit as st
+import pandas as pd
 import requests
 import weaviate
 import langchain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import cohere
 import os
+import openai
 from dotenv import load_dotenv
 load_dotenv()
+
+# Openai api_key
+openai.api_key = 'OPENAI_API_KEY'
+
+# Openai gpt response
+response = openai.Completion.create(
+    engine="text-davinci-003",  # Specify the engine you want to use
+    prompt="Once upon a time",
+    max_tokens=50
+)
+
+print(response.choices[0].text.strip())
 
 # Weaviate client connection
 URL = os.getenv('YOUR_WCS_URL')
@@ -72,6 +86,27 @@ def main():
     st.title("Input Output App")
 
     assert client.is_live()
+
+    # Create the columns
+    left, right = st.columns(2)
+    # Create an upload box for images
+    left.file_uploader("Please insert Images on habits and health!")
+    if uploaded_file is not None:
+        # To read file as bytes:
+        bytes_data = uploaded_file.getvalue()
+        st.write(bytes_data)
+
+        # To convert to a string based IO:
+        stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+        st.write(stringio)
+
+        # To read file as string:
+        string_data = stringio.read()
+        st.write(string_data)
+
+        # Can be used wherever a "file-like" object is accepted:
+        dataframe = pd.read_csv(uploaded_file)
+        st.write(dataframe)
 
     # Create a text input box for user input
     user_input = st.text_area("Enter text:")

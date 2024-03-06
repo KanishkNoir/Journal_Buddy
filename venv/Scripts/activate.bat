@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\Admin\OneDrive\Desktop\LEAP\LEAP-2024-Hackathon-team_Noir\venv
+set VIRTUAL_ENV=C:\Users\aryan\OneDrive\Documents\GitHub\LEAP-2024-Hackathon-team_Noir\venv
 
 if not defined PROMPT set PROMPT=$P$G
 
