@@ -14,11 +14,11 @@ load_dotenv()
 openai.api_key = 'OPENAI_API_KEY'
 
 # Openai gpt response
-response = openai.Completion.create(
-    engine="text-davinci-003",  # Specify the engine you want to use
-    prompt="Once upon a time",
-    max_tokens=50
-)
+# response = openai.Completion.create(
+#     engine="text-davinci-003",  # Specify the engine you want to use
+#     prompt="Once upon a time",
+#     max_tokens=50
+# )
 
 print(response.choices[0].text.strip())
 
