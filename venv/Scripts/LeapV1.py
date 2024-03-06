@@ -90,6 +90,8 @@ def main():
     output_text = process_input(user_input)
     st.text_area("Output:", value=output_text, height=200)
 
+    
+
     client.close()
 
 def process_input(input_text):
