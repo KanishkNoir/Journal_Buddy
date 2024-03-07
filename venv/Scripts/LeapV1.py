@@ -36,7 +36,7 @@ def analyzeFoodImage(base64_image):
                 ]
             }
         ],
-        "max_tokens": 300
+        "max_tokens": 1000
     }
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
