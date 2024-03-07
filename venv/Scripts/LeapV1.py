@@ -60,8 +60,9 @@ def analyzeFoodImage(base64_image, key):
 def daily_quote():
     url = "https://quotes-inspirational-quotes-motivational-quotes.p.rapidapi.com/quote"
     querystring = {"token": "ipworld.info"}
+
     headers = {
-        "X-RapidAPI-Key": "6bec5978aemshf6ed715ed18aa04p17df5djsnc6d22e95d8c8",
+        "X-RapidAPI-Key": "71532e8046mshd910a918d4c740fp15a5dcjsnd30ff9b30863",
         "X-RapidAPI-Host": "quotes-inspirational-quotes-motivational-quotes.p.rapidapi.com"
     }
     response = requests.get(url, headers=headers, params=querystring)
@@ -126,7 +127,7 @@ def main():
 
     # Display the daily quote at the top of the page with a larger font
     st.write(f"<div style='font-size: 24px;'>Daily Quote: {quote_info[0]}</div>", unsafe_allow_html=True)
-    st.write(f"<div style='font-size: 14px; text-align: right;'>{quote_info[1]}</div>", unsafe_allow_html=True)
+    st.write(f"<div style='font-size: 18px; text-align: right;'>{quote_info[1]}</div>", unsafe_allow_html=True)
     st.markdown("In case the daily quote is not visible that means max API requests have expired.")
 
     st.title("Journal Buddy")
