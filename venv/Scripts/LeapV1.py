@@ -5,10 +5,6 @@ import os
 import base64
 import json
 from openai import OpenAI
-from dotenv import load_dotenv
-
-load_dotenv()
-
 
 def analyzeFoodImage(base64_image, key):
     api_key = key
