@@ -10,8 +10,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def analyzeFoodImage(base64_image):
-    api_key = os.getenv('OPENAI_API_KEY')
+def analyzeFoodImage(base64_image, key):
+    api_key = key
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {api_key}"
@@ -162,6 +162,7 @@ def main():
 
     # Create an upload box for images
     uploaded_image = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
+    openai_key = st.text_input("Enter your OpenAI API key.")
 
     if uploaded_image is not None:
         # Display the uploaded image
@@ -178,7 +179,7 @@ def main():
         base64_image = image_to_base64(image_path)
 
         # Analyze the image using OpenAI function
-        response = analyzeFoodImage(base64_image)
+        response = analyzeFoodImage(base64_image, openai_key)
 
         # Display the output in a text area
         st.success(response)
