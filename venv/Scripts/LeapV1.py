@@ -100,7 +100,7 @@ def daily_quote():
 #     )
 #     return vectorstore
 
-def process_input(input_text):
+def process_input(input_text,key):
     client = OpenAI()
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -134,12 +134,13 @@ def main():
 
     # Create a text input box for user input
     user_input = st.text_area("Enter text:")
+    openai_key = st.text_input("Enter OpenAI key")
     sumbit_button = st.button("Submit")
 
     if sumbit_button:
         st.subheader("Hmm....")
         with st.spinner("Analyzing your daily journal entry..."):
-            response = process_input(user_input)
+            response = process_input(user_input, openai_key)
         st.subheader("My feedback to your today's journal entry:")
         st.success(response)
 
