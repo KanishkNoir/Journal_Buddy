@@ -156,7 +156,7 @@ def main():
     # weaviate_client.close()
 
     # Create an upload box for images
-    uploaded_image = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
+    uploaded_image = st.file_uploader("Upload What You Ate Today to get a nutrion review!", type=["jpg", "jpeg", "png"])
     openai_key = st.text_input("Enter your OpenAI API key.")
 
     if uploaded_image is not None:
