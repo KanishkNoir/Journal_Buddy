@@ -1,5 +1,5 @@
 openai
-dotenv
+python-dotenv
 requests
 os
 json
