@@ -3,6 +3,7 @@ import openai
 import requests
 import base64
 import json
+import os
 from openai import OpenAI
 
 def analyzeFoodImage(base64_image, key):
