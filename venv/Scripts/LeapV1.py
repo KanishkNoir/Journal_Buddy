@@ -1,11 +1,6 @@
 import streamlit as st
 import pandas as pd
 import requests
-import weaviate
-import weaviate.classes as wvc
-import langchain
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-import cohere
 import os
 import base64
 import json
@@ -30,7 +25,7 @@ def analyzeFoodImage(base64_image):
                 "content": [
                     {
                         "type": "text",
-                        "text": "Analyze this food image and provide its nutritional benefits and other health parameters."
+                        "text": "You are a nutrionist and your role is to analyze the food image and then tell its nutrition facts, its advantages and disadvantagesm its alternatives and its role in a healthy diet."
                     },
                     {
                         "type": "image_url",
@@ -53,18 +48,18 @@ def analyzeFoodImage(base64_image):
     return content
 
 
-# Weaviate client connection
-URL = os.getenv('YOUR_WCS_URL')
-APIKEY = os.getenv('YOUR_WCS_API_KEY')
+# # Weaviate client connection
+# URL = os.getenv('YOUR_WCS_URL')
+# APIKEY = os.getenv('YOUR_WCS_API_KEY')
+#
+# # Connect to a WCS instance
+# weaviate_client = weaviate.connect_to_wcs(
+#     cluster_url=URL,
+#     auth_credentials=weaviate.auth.AuthApiKey(APIKEY),
+#     skip_init_checks=True)
 
-# Connect to a WCS instance
-weaviate_client = weaviate.connect_to_wcs(
-    cluster_url=URL,
-    auth_credentials=weaviate.auth.AuthApiKey(APIKEY),
-    skip_init_checks=True)
-
-# Cohere client connection
-co = cohere.Client('COHERE_API_KEY')
+# # Cohere client connection
+# co = cohere.Client('COHERE_API_KEY')
 
 
 def daily_quote():
@@ -90,16 +85,16 @@ def daily_quote():
         return "Failed to fetch daily quote"
 
 
-def chunk_splitting(text):
-    # Create a text splitter
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=100,
-        chunk_overlap=20,
-        length_function=len,
-        is_separator_regex=False,
-    )
-    chunks = text_splitter.split_text(text)
-    return chunks
+# def chunk_splitting(text):
+#     # Create a text splitter
+#     text_splitter = RecursiveCharacterTextSplitter(
+#         chunk_size=100,
+#         chunk_overlap=20,
+#         length_function=len,
+#         is_separator_regex=False,
+#     )
+#     chunks = text_splitter.split_text(text)
+#     return chunks
 
 
 # def vectorization(chunks):
@@ -109,41 +104,16 @@ def chunk_splitting(text):
 #     )
 #     return vectorstore
 
-def cohere_chat(query):
-    chat_history = []
-    max_turns = 10
-
-    for _ in range(max_turns):
-        # get user input
-        message = input("Send the buddy a message: ")
-
-        # generate a response with the current chat history
-        response = co.chat(
-            message,
-            temperature=0.8,
-            chat_history=chat_history
-        )
-        answer = response.text
-
-        return answer
-
-        # add message and answer to the chat history
-        user_message = {"user_name": "User", "text": message}
-        bot_message = {"user_name": "Chatbot", "text": answer}
-
-        chat_history.append(user_message)
-        chat_history.append(bot_message)
-
 def process_input(input_text):
     client = OpenAI()
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system",
-             "content": "You are a buddy to the user and you will analyze the journal entry by user and give a feedback to the user that contains parameters like overall mood, health and fitness, food nutritional benefits, productivity. You should give the user feedback such that you praise them for the good things and suggest methods to improve on what they did bad"},
+             "content": "you are a feedback provider. Analyze the user's journal entry and reflect on it with quotes and affirmations depending on user's moood. Analyze user's productivity and give them feedback how to improve it if its bad and praise them if its good. Analyze the user's activities towards health and fitness and provide feedback and suggestions on it. If the user has entered about food intake them analyze them and suggest adavantages and disadvantages about that and alternative choices. In the end summarize your feedback with a overrall understanding of user's entry and help them maintain a healthy lifestyle."},
             {"role": "user", "content": input_text},
         ],
-        max_tokens=200
+        max_tokens=400
     )
     print(completion)
     return completion.choices[0].message.content
@@ -162,8 +132,9 @@ def main():
     # Display the daily quote at the top of the page with a larger font
     st.write(f"<div style='font-size: 24px;'>Daily Quote: {quote_info[0]}</div>", unsafe_allow_html=True)
     st.write(f"<div style='font-size: 14px; text-align: right;'>{quote_info[1]}</div>", unsafe_allow_html=True)
+    st.markdown("In case the daily quote is not visible that means max API requests have expired.")
 
-    st.title("Your AI Journaling Buddy")
+    st.title("Journal Buddy")
 
     # Create a text input box for user input
     user_input = st.text_area("Enter text:")
@@ -177,22 +148,20 @@ def main():
         st.success(response)
 
     # Create a text box to display the input
-    st.sidebar.title("Input Display")
-    st.sidebar.markdown(user_input, unsafe_allow_html=True)
+    st.sidebar.title("Why daily journaling?")
+    st.sidebar.markdown("Daily journaling involves regularly documenting thoughts, experiences, and reflections, usually on a daily basis, to process emotions, document life, and encourage personal development. The practice offers numerous benefits such as mental clarity, stress reduction, heightened self-awareness, improved problem-solving abilities, and the ability to monitor personal growth. It contributes to mental health by serving as a therapeutic outlet for emotions, aiding in anxiety management, stress reduction, and coping with depression through the clarification of thoughts and emotions. Daily journal entries can encompass a wide range of topics including daily activities, thoughts, feelings, goals, challenges, and achievements, providing a personalized space for self-expression.", unsafe_allow_html=True)
 
-    chunks = chunk_splitting(user_input)
-    print("chunks created successfully")
+    # chunks = chunk_splitting(user_input)
+    # print("chunks created successfully")
 
     # vectorStore = vectorization(chunks)
     # print("embeddings created successfully and stored in vector store")
 
-    st.chat_input("HELLO")
-    weaviate_client.close()
+    st.chat_input("(COMING SOON!) RAG based chatbot that will help you in your journaling and personal growth!")
+    # weaviate_client.close()
 
-    # Create the columns
-    left, right = st.columns(2)
     # Create an upload box for images
-    uploaded_image = left.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
+    uploaded_image = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
 
     if uploaded_image is not None:
         # Display the uploaded image
@@ -212,7 +181,7 @@ def main():
         response = analyzeFoodImage(base64_image)
 
         # Display the output in a text area
-        right.success(response)
+        st.success(response)
 
 
 if __name__ == "__main__":
