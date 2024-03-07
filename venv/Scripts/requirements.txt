@@ -1,5 +1,1 @@
 openai
-requests
-os
-json
-base64

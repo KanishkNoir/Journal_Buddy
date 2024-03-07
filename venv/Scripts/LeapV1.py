@@ -1,7 +1,6 @@
 import streamlit as st
 import openai
 import requests
-import os
 import base64
 import json
 from openai import OpenAI
