@@ -1,1 +1,6 @@
 openai
+dotenv
+requests
+os
+json
+base64
